@@ -13,10 +13,13 @@ async function draw() {
     headers,
     method: 'GET',
     credentials: 'include'
-  }).then((res) => res.json());
-
+  }).then((res) => {
+    if (typeof res === 'object') return res
+    return res.json();
+  })
+  console.log(today, 'today')
   if (today.err_no !== 0) return Promise.reject('查询免费抽奖，接口调用异常！');
-  if (today.data.free_count === 0) return '今日已经免费抽奖！';
+  if (today.data.free_count === 0 || today.timeout == 0) return '今日已经免费抽奖！'
 
   // 免费抽奖
   const res = await fetch('https://api.juejin.cn/growth_api/v1/lottery/draw', {
